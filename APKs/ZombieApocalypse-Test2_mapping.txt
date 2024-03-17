@@ -1,0 +1,56 @@
+# compiler: R8
+# compiler_version: 4.0.48
+# min_api: 22
+# common_typos_disable
+# {"id":"com.android.tools.r8.mapping","version":"2.1"}
+# pg_map_id: bc45ac5
+# pg_map_hash: SHA-256 bc45ac591a972b54376a6d7a068ffb1487a117922485392a2e2bc3029f6d8314
+com.google.androidgamesdk.ChoreographerCallback$1 -> com.google.androidgamesdk.ChoreographerCallback$a:
+com.google.androidgamesdk.ChoreographerCallback$a -> com.google.androidgamesdk.ChoreographerCallback$b:
+com.google.androidgamesdk.SwappyDisplayManager$1 -> com.google.androidgamesdk.SwappyDisplayManager$a:
+com.google.androidgamesdk.SwappyDisplayManager$a -> com.google.androidgamesdk.SwappyDisplayManager$b:
+    com.google.androidgamesdk.SwappyDisplayManager b -> d
+    java.util.concurrent.locks.Condition d -> c
+    java.util.concurrent.locks.Lock c -> b
+com.unity3d.player.UnityPlayerActivity -> com.unity3d.player.UnityPlayerActivity:
+    0:65535:void <init>():15:15 -> <init>
+    1:7:boolean dispatchKeyEvent(android.view.KeyEvent):154:154 -> dispatchKeyEvent
+    8:14:boolean dispatchKeyEvent(android.view.KeyEvent):155:155 -> dispatchKeyEvent
+    15:19:boolean dispatchKeyEvent(android.view.KeyEvent):156:156 -> dispatchKeyEvent
+    1:3:void onConfigurationChanged(android.content.res.Configuration):139:139 -> onConfigurationChanged
+    4:9:void onConfigurationChanged(android.content.res.Configuration):140:140 -> onConfigurationChanged
+    2:4:void onCreate(android.os.Bundle):34:34 -> onCreate
+    5:7:void onCreate(android.os.Bundle):35:35 -> onCreate
+    8:21:void onCreate(android.os.Bundle):37:37 -> onCreate
+    22:28:void onCreate(android.os.Bundle):38:38 -> onCreate
+    29:35:void onCreate(android.os.Bundle):40:40 -> onCreate
+    36:38:void onCreate(android.os.Bundle):41:41 -> onCreate
+    39:44:void onCreate(android.os.Bundle):42:42 -> onCreate
+    1:5:void onDestroy():67:67 -> onDestroy
+    6:9:void onDestroy():68:68 -> onDestroy
+    0:65535:boolean onGenericMotionEvent(android.view.MotionEvent):163:163 -> onGenericMotionEvent
+    0:65535:boolean onKeyDown(int,android.view.KeyEvent):161:161 -> onKeyDown
+    0:65535:boolean onKeyUp(int,android.view.KeyEvent):160:160 -> onKeyUp
+    1:3:void onLowMemory():122:122 -> onLowMemory
+    4:9:void onLowMemory():123:123 -> onLowMemory
+    1:3:void onNewIntent(android.content.Intent):60:60 -> onNewIntent
+    4:9:void onNewIntent(android.content.Intent):61:61 -> onNewIntent
+    1:3:void onPause():98:98 -> onPause
+    4:6:void onPause():100:100 -> onPause
+    7:13:void onPause():102:102 -> onPause
+    14:19:void onPause():105:105 -> onPause
+    1:3:void onResume():111:111 -> onResume
+    4:16:void onResume():113:113 -> onResume
+    17:22:void onResume():116:116 -> onResume
+    1:3:void onStart():87:87 -> onStart
+    4:10:void onStart():89:89 -> onStart
+    11:16:void onStart():92:92 -> onStart
+    1:3:void onStop():77:77 -> onStop
+    4:10:void onStop():79:79 -> onStop
+    11:16:void onStop():82:82 -> onStop
+    0:65535:boolean onTouchEvent(android.view.MotionEvent):162:162 -> onTouchEvent
+    1:7:void onTrimMemory(int):129:129 -> onTrimMemory
+    8:13:void onTrimMemory(int):132:132 -> onTrimMemory
+    0:65535:void onUnityPlayerUnloaded():47:47 -> onUnityPlayerUnloaded
+    1:3:void onWindowFocusChanged(boolean):146:146 -> onWindowFocusChanged
+    4:9:void onWindowFocusChanged(boolean):147:147 -> onWindowFocusChanged
