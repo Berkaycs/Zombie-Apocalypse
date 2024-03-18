@@ -1,19 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyMove : MonoBehaviour
 {
-    [SerializeField] private Transform _target;
+    private Transform _target;
     public NavMeshAgent Agent;
     public bool IsZombie;
     public bool IsBat;
     public bool IsGhost;
+    //public bool IsEnemyAlive;
 
     //[SerializeField] private float speed;
 
-    private void Start()
+    private void Awake()
+    {
+        //JoystickController.OnEnemyDead += JoystickController_OnEnemyDead;
+        _target = GameObject.Find("Parent").GetComponentInChildren<Transform>();
+    }
+
+    /*
+    private void JoystickController_OnEnemyDead(object sender, EventArgs e)
+    {
+        IsEnemyAlive = false;
+    }
+    */
+
+    private void OnEnable()
     {
         if (IsZombie == true)
         {
@@ -28,7 +41,8 @@ public class EnemyMove : MonoBehaviour
         if(IsBat == true || IsGhost == true)
         {
             transform.position = Vector3.MoveTowards(transform.position, _target.position, JoystickController.Step);
-        }   
+            //transform.LookAt(transform.position + _target.position);
+        }
     }
 
     void MoveTo()
