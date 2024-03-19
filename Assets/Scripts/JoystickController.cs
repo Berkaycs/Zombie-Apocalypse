@@ -1,25 +1,26 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class JoystickController : MonoBehaviour
 {
-    public static event EventHandler OnEnemyDead;
-
     [SerializeField] private Joystick _joystick;
     [SerializeField] private GameObject _cam;
     [SerializeField] private GameObject _parentCam;
 
     private float _rotHAmount;
     private float _rotVAmount;
-    public float RotationSpeed = 45;
+    private float RotationSpeed = 50;
+
+    public bool IsGameOver = false;
 
     // Enemy Move 
-    private float Speed = 4;
+    public float Speed = 1.8f;
+    private float _speedMultiplier = 0.2f;
     public static float Step;
 
     // Shooting
@@ -27,20 +28,22 @@ public class JoystickController : MonoBehaviour
     [SerializeField] private Animator _armsAnim;
     [SerializeField] private AudioSource _gunShotSound;
     [SerializeField] private LayerMask _targetLayer;
-    private WaitForSeconds _zombieDeathTime = new WaitForSeconds(2); // otherwise it constantly create new waitforsecond object which makes to work GC in some place and decrease the performance
-    private WaitForSeconds _batDeathTime = new WaitForSeconds(1);
-    private WaitForSeconds _ghostDeathTime = new WaitForSeconds(1); 
+    private WaitForSeconds _zombieDeathTime = new WaitForSeconds(0.6f); // otherwise it constantly create new waitforsecond object which makes to work GC in some place and decrease the performance
+    private WaitForSeconds _batDeathTime = new WaitForSeconds(0.5f);
+    private WaitForSeconds _ghostDeathTime = new WaitForSeconds(0.3f); 
     private RaycastHit _hit;
 
     // Particles
     [SerializeField] private GameObject _particleFXZombie;
     [SerializeField] private GameObject _particleFXBat;
     [SerializeField] private GameObject _particleFXGhost;
+    [SerializeField] private GameObject _particleFXPumpkin;
 
     // Player Damage
     public bool ZombieAttack = false;
     public bool GhostAttack = false;
     public bool BatAttack = false;
+    public Image _healthBar;
 
     // Reloading
     [SerializeField] private GameObject _reloadButton;
@@ -55,9 +58,9 @@ public class JoystickController : MonoBehaviour
 
     // Timer
     [SerializeField] private TextMeshProUGUI _timer;
-    WaitForSeconds TimeDelay = new WaitForSeconds(1);
-    private int _levelTimeLimit = 30;
-    private int _levelCurrentTime;
+    private WaitForSeconds _timeDelay = new WaitForSeconds(1);
+    private int _levelTimeLimit = 45;
+    public int _levelCurrentTime;
 
     // Level Up
     public static int LevelNumber = 1;
@@ -77,10 +80,15 @@ public class JoystickController : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 60;
+        if (IsGameOver == true)
+        {
+            LevelNumber = 1;
+            IsGameOver = false;
+        }
         _levelText.text = "Level " + LevelNumber.ToString();
-        Speed = Speed *= LevelNumber / 2;
+        Speed += LevelNumber * _speedMultiplier;
         _levelCurrentTime = _levelTimeLimit;
-        StartCoroutine(TimeCountDown());
+        TimeCountDown();
     }
 
     private void Update()
@@ -95,7 +103,7 @@ public class JoystickController : MonoBehaviour
 
     public void Shoot()
     {
-        if (_deactiveBullets.Count < 8)
+        if (_deactiveBullets.Count < 8 && !IsGameOver)
         {
             if (_index > 7)
             {
@@ -105,9 +113,9 @@ public class JoystickController : MonoBehaviour
             if (_index <= 7)
             {
                 _armsAnim.SetTrigger("Fire");
+                _gunShotSound.Play();
                 _bullets[_index].gameObject.SetActive(false);
                 _deactiveBullets.Add(_bullets[_index]);
-                _gunShotSound.Play();
 
                 Ray ray = Camera.main.ScreenPointToRay(_crosshair.transform.position);
 
@@ -115,42 +123,48 @@ public class JoystickController : MonoBehaviour
                 {
                     if (_hit.transform.CompareTag("Zombie"))
                     {
-                        OnEnemyDead?.Invoke(this, EventArgs.Empty);
                         _hit.transform.gameObject.GetComponent<Animator>().SetTrigger("Die");
                         _particleFXZombie.transform.position = _hit.transform.position;
                         _particleFXZombie.SetActive(true);
                         StartCoroutine(ZombieDeathTime());
 
                         int enemyTpye = Random.Range(0, 3);
-                        int spawnIndex = Random.Range(0, 6);
+                        int spawnIndex = Random.Range(0, 5);
                         EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
                     }
 
                     if (_hit.transform.CompareTag("Bat"))
                     {
-                        OnEnemyDead?.Invoke(this, EventArgs.Empty);
                         _hit.transform.gameObject.GetComponent<Animator>().SetTrigger("Die");
                         _particleFXBat.transform.position = _hit.transform.position;
                         _particleFXBat.SetActive(true);
                         StartCoroutine(BatDeathTime());
 
                         int enemyTpye = Random.Range(0, 3);
-                        int spawnIndex = Random.Range(0, 6);
+                        int spawnIndex = Random.Range(0, 5);
                         EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
                     }
 
                     if (_hit.transform.CompareTag("Ghost"))
                     {
-                        OnEnemyDead?.Invoke(this, EventArgs.Empty);
                         _hit.transform.gameObject.GetComponent<Animator>().SetTrigger("Die");
                         _particleFXGhost.transform.position = _hit.transform.position;
                         _particleFXGhost.SetActive(true);
                         StartCoroutine(GhostDeathTime());
 
                         int enemyTpye = Random.Range(0, 3);
-                        int spawnIndex = Random.Range(0, 6);
+                        int spawnIndex = Random.Range(0, 5);
                         EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
                     }
+
+                    if (_hit.transform.CompareTag("Pumpkin"))
+                    {
+                        _particleFXPumpkin.transform.position = _hit.transform.position;
+                        _particleFXPumpkin.SetActive(true);
+                        _healthBar.fillAmount += 0.3f;
+                        _hit.transform.gameObject.SetActive(false);
+                    }
+
                 }
 
                 _index++;
@@ -202,13 +216,13 @@ public class JoystickController : MonoBehaviour
         }
     }
 
-    IEnumerator TimeCountDown()
+    void TimeCountDown()
     {
         if (_levelCurrentTime > 0)
         {
             _levelCurrentTime -= 1;
             _timer.text = _levelCurrentTime.ToString();
-            yield return TimeDelay;
+            StartCoroutine(TimeDelay());
         }
 
         if (_levelCurrentTime < 2)
@@ -221,5 +235,11 @@ public class JoystickController : MonoBehaviour
             LevelNumber++;
             SceneManager.LoadScene(1);
         }
+    }
+
+    IEnumerator TimeDelay()
+    {
+        yield return _timeDelay;
+        TimeCountDown();
     }
 }

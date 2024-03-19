@@ -410,7 +410,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4256525295846912958}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 2.44, z: 0}
+  m_LocalPosition: {x: 0, y: 2.2, z: 0}
   m_LocalScale: {x: 25, y: 25, z: 25}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -452,7 +452,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23db1928704227742a3aa9fb9a85b979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {fileID: 0}
   Agent: {fileID: 0}
   IsZombie: 0
   IsBat: 1
@@ -484,8 +483,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.0701011, y: 0.02200362, z: 0.024858244}
-  m_Center: {x: -0.00045054077, y: 0.010515571, z: -0.0024435425}
+  m_Size: {x: 0.0701011, y: 0.026784515, z: 0.024858244}
+  m_Center: {x: -0.00045053958, y: 0.012489233, z: -0.0024435425}
 --- !u!1 &4256525295868027894
 GameObject:
   m_ObjectHideFlags: 0

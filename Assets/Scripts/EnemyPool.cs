@@ -56,7 +56,7 @@ public class EnemyPool : MonoBehaviour
     IEnumerator SpawnDelay()
     {
         yield return _spawnDelay;
-        int iterationLimit = 6;
+        int iterationLimit = 5;
         int spawnIndex = 0;
 
         for (int j = 0; j < iterationLimit; j++)

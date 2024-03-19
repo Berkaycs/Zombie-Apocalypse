@@ -1,88 +1,100 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class Damage : MonoBehaviour
 {
-    public event EventHandler OnPlayerDead;
-
+    [SerializeField] private JoystickController _controller;
     [SerializeField] private AudioSource _damageSound;
     [SerializeField] private AudioClip _batBite, _ghostHowl, _zombieBite;
     [SerializeField] private Image _batImage, _ghostImage, _zombieImage;
-    [SerializeField] private Image _healthBar;
+    [SerializeField] private GameObject _gameOver;
+    [SerializeField] private GameObject _pumpkinTip;
 
-    private float _zombieDamage = 0.015f;
-    private float _ghostDamage = 0.010f;
-    private float _batDamage = 0.05f;
+    private float _zombieDamage = 0.080f;
+    private float _ghostDamage = 0.060f;
+    private float _batDamage = 0.050f;
+    private bool _isFirstDamage = false;
+    private bool _isFirstDamageHandled = false;
 
     private WaitForSeconds _graphicPauseTime = new WaitForSeconds(0.3f);
+    private WaitForSeconds _tipTime = new WaitForSeconds(15);
 
-    private void Start()
+    private void Awake()
     {
-        OnPlayerDead += JoystickController_OnPlayerDead;
-    }
-
-    private void JoystickController_OnPlayerDead(object sender, System.EventArgs e)
-    {
-        CheckForGameOver();
+        _gameOver.SetActive(false);
     }
 
     void CheckForGameOver()
     {
-        if (_healthBar.fillAmount <= 0)
+        if (_controller._healthBar.fillAmount <= 0 && _controller._levelCurrentTime > 2)
         {
-            Debug.Log("Game Over!");
+            _controller.IsGameOver = true;
+            _gameOver.SetActive(true);
+            Time.timeScale = 0;
+            JoystickController.LevelNumber = 1;
+            _controller.Speed = 2;
         }
+    }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_isFirstDamage && !_isFirstDamageHandled)
+        {
+            StartCoroutine(PumpkinTip());
+            _isFirstDamageHandled = true;
+        }
+
         if (other.CompareTag("Bat"))
         {
             _damageSound.clip = _batBite;
             _damageSound.Play();
-            _healthBar.fillAmount -= _batDamage;
+            _controller._healthBar.fillAmount -= _batDamage;
             _batImage.gameObject.SetActive(true);
             StartCoroutine(HideImage());
 
             int enemyTpye = Random.Range(0, 3);
-            int spawnIndex = Random.Range(0, 6);
+            int spawnIndex = Random.Range(0, 5);
             EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
-
-            OnPlayerDead?.Invoke(this, EventArgs.Empty);
+            _isFirstDamage = true;
+            CheckForGameOver();
         }
 
         if (other.CompareTag("Ghost"))
         {
             _damageSound.clip = _ghostHowl;
             _damageSound.Play();
-            _healthBar.fillAmount -= _ghostDamage;
+            _controller._healthBar.fillAmount -= _ghostDamage;
             _ghostImage.gameObject.SetActive(true);
             StartCoroutine(HideImage());
 
             int enemyTpye = Random.Range(0, 3);
-            int spawnIndex = Random.Range(0, 6);
+            int spawnIndex = Random.Range(0, 5);
             EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
-
-            OnPlayerDead?.Invoke(this, EventArgs.Empty);
+            _isFirstDamage = true;
+            CheckForGameOver();
         }
 
         if (other.CompareTag("Zombie"))
         {
             _damageSound.clip = _zombieBite;
             _damageSound.Play();
-            _healthBar.fillAmount -= _zombieDamage;
+            _controller._healthBar.fillAmount -= _zombieDamage;
             _zombieImage.gameObject.SetActive(true);
             StartCoroutine(HideImage());
 
             int enemyTpye = Random.Range(0, 3);
-            int spawnIndex = Random.Range(0, 6);
+            int spawnIndex = Random.Range(0, 5);
             EnemyPool.Instance.GetEnemies(enemyTpye, spawnIndex);
-
-            OnPlayerDead?.Invoke(this, EventArgs.Empty);
+            _isFirstDamage = true;
+            CheckForGameOver();
         }
 
         other.gameObject.SetActive(false);
@@ -94,5 +106,12 @@ public class Damage : MonoBehaviour
         _zombieImage.gameObject.SetActive(false);
         _ghostImage.gameObject.SetActive(false);
         _batImage.gameObject.SetActive(false);
+    }
+
+    IEnumerator PumpkinTip()
+    {
+        _pumpkinTip.gameObject.SetActive(true);
+        yield return _tipTime;
+        _pumpkinTip.gameObject.SetActive(false);
     }
 }
