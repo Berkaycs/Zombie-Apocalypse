@@ -14,12 +14,12 @@ public class JoystickController : MonoBehaviour
 
     private float _rotHAmount;
     private float _rotVAmount;
-    private float RotationSpeed = 50;
+    private float RotationSpeed = 75;
 
     public bool IsGameOver = false;
 
     // Enemy Move 
-    public float Speed = 1.8f;
+    public float Speed = 2f;
     private float _speedMultiplier = 0.2f;
     public static float Step;
 
@@ -32,6 +32,7 @@ public class JoystickController : MonoBehaviour
     private WaitForSeconds _batDeathTime = new WaitForSeconds(0.5f);
     private WaitForSeconds _ghostDeathTime = new WaitForSeconds(0.3f); 
     private RaycastHit _hit;
+    private bool _canShoot = true;
 
     // Particles
     [SerializeField] private GameObject _particleFXZombie;
@@ -51,6 +52,7 @@ public class JoystickController : MonoBehaviour
     [SerializeField] private List<GameObject> _deactiveBullets = new List<GameObject>();
     WaitForSeconds ReloadPause = new WaitForSeconds(2);
     private int _index = 0;
+    private WaitForSeconds _shootDelay = new WaitForSeconds(2);
 
     // Sound Effects
     [SerializeField] private AudioSource _source;
@@ -103,7 +105,7 @@ public class JoystickController : MonoBehaviour
 
     public void Shoot()
     {
-        if (_deactiveBullets.Count < 8 && !IsGameOver)
+        if (_deactiveBullets.Count < 8 && !IsGameOver && _canShoot)
         {
             if (_index > 7)
             {
@@ -180,10 +182,12 @@ public class JoystickController : MonoBehaviour
 
     public void Reload()
     {
+        _canShoot = false;
         _armsAnim.SetTrigger("Reload");
         _source.clip = _reloadFX;
         _source.Play();
         StartCoroutine(WaitForReload());
+        StartCoroutine(ShootDelay());
         _reloadButton.SetActive(false);
         _deactiveBullets.Clear();
     }
@@ -241,5 +245,11 @@ public class JoystickController : MonoBehaviour
     {
         yield return _timeDelay;
         TimeCountDown();
+    }
+
+    IEnumerator ShootDelay()
+    {
+        yield return _shootDelay;
+        _canShoot = true;
     }
 }

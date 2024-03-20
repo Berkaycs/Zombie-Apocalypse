@@ -13,9 +13,9 @@ public class Damage : MonoBehaviour
     [SerializeField] private GameObject _gameOver;
     [SerializeField] private GameObject _pumpkinTip;
 
-    private float _zombieDamage = 0.080f;
-    private float _ghostDamage = 0.060f;
-    private float _batDamage = 0.050f;
+    private float _zombieDamage = 0.13f;
+    private float _ghostDamage = 0.1f;
+    private float _batDamage = 0.08f;
     private bool _isFirstDamage = false;
     private bool _isFirstDamageHandled = false;
 
